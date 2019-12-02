@@ -4,11 +4,19 @@ class Form extends Component {
   state = {
     name: null,
     email: null,
-    image: null
+    image: null,
+    url: ""
   };
   handleChange = e => {
-    this.setState({ name: e.target.value, email: e.target.value });
-    console.log(e.target.value);
+    this.setState({
+      name: e.target.value,
+      email: e.target.value
+    });
+  };
+  handleChangeImage = e => {
+    if (e.target.files[0]) {
+      this.setState({ image: e.target.files[0] });
+    }
   };
   render() {
     return (
@@ -30,7 +38,7 @@ class Form extends Component {
             value={this.state.text}
           />
           <label>Image: </label>
-          <input id="image" type="file" />
+          <input id="image" type="file" onChange={this.handleChangeImage} />
 
           <button>Send</button>
         </form>
@@ -38,5 +46,4 @@ class Form extends Component {
     );
   }
 }
-
 export default Form;
