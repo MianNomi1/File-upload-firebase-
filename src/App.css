@@ -20,3 +20,51 @@
 .App-link {
   color: #09d3ac;
 }
+ul {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+/* nav {
+  display: flex;
+  justify-content: space-between;
+  background-color: #09d3ac;
+}
+.logo {
+  margin-left: 20px;
+  padding-top: 14px;
+  width: 80px;
+}
+.logo a {
+  color: #282c34;
+}
+.list {
+  display: flex;
+}
+.list li {
+  width: 100px;
+}
+.list a {
+  color: black;
+} */
+.form-container {
+  width: 50%;
+  margin: 0 auto;
+}
+label {
+  font-size: 20px;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 500;
+}
+input {
+  display: block;
+  width: 60%;
+  margin-top: 10px;
+  padding: 6px;
+}
+button {
+  margin-top: 20px;
+  width: 100px;
+  font-size: 16px;
+}
