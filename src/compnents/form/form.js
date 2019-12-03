@@ -24,26 +24,42 @@ class Form extends Component {
     e.preventDefault();
     this.wirteUserData(this.state.name, this.state.email, this.state.image);
   };
-  wirteUserData = (userName, email, imageUrl) => {
+  wirteUserData = (userName, email, image) => {
+    let imageurl;
+    let key;
     firebase
       .database()
       .ref("users")
       .push({
         username: userName,
-        email: email
-        // profile: imageFile
+        email: email,
+        url: ""
       })
-      .then(() => {
-        this.uploadImage();
+      .then(response => {
+        key = response.key;
+        return key;
+      })
+      .then(key => {
+        var file = image;
+        var ref = firebase.storage().ref("/users-" + key);
+        ref.put(file).then(fileData => {
+          console.log("Uploaded a blob or file!", fileData);
+          imageurl = fileData.metadata.fullPath;
+          return firebase
+            .database()
+            .ref("users")
+            .child(key)
+            .update({ url: imageurl });
+        });
       });
   };
-  uploadImage = () => {
-    var file = this.state.image;
-    var ref = firebase.storage().ref("/users-" + Date.now());
-    ref.put(file).then(function(snapshot) {
-      console.log("Uploaded a blob or file!", snapshot);
-    });
-  };
+  // uploadImage = key => {
+  //   var file = this.state.image;
+  //   var ref = firebase.storage().ref("/users-" + Date.now());
+  //   ref.put(file).then(function(snapshot) {
+  //     console.log("Uploaded a blob or file!", snapshot);
+  //   });
+  // };
   render() {
     return (
       <div className="form-container">
