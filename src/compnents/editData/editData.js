@@ -1,13 +1,24 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router";
+import { withRouter } from "react-router-dom";
 import * as firebase from "firebase";
-class Form extends Component {
+class EditData extends Component {
   state = {
+    obj: {},
     name: null,
     email: null,
     image: null,
     url: ""
   };
+  componentDidMount() {
+    let key = this.props.match.params.id;
+    firebase
+      .database()
+      .ref("users/" + key)
+      .once("value", data => {
+        console.log(data.val());
+        this.setState({ obj: data.val() });
+      });
+  }
   handleChange = e => {
     let { name, value } = e.target;
 
@@ -20,30 +31,24 @@ class Form extends Component {
       this.setState({ image: e.target.files[0] });
     }
   };
-  showDataHandler = () => {
-    this.props.history.push("/users");
-  };
-  handleSubmit = e => {
+  handleUpdate = e => {
     console.log(this.state.name, this.state.email, this.state.image);
     e.preventDefault();
     this.wirteUserData(this.state.name, this.state.email, this.state.image);
   };
   wirteUserData = (userName, email, image) => {
     let imageurl;
-    let key;
+    let key = this.props.match.params.id;
     firebase
       .database()
       .ref("users")
-      .push({
+      .child(key)
+      .update({
         username: userName,
         email: email,
         url: ""
       })
-      .then(response => {
-        key = response.key;
-        return key;
-      })
-      .then(key => {
+      .then(() => {
         var file = image;
         var newUrl = "";
         var ref = firebase.storage().ref("/users-" + key);
@@ -72,42 +77,42 @@ class Form extends Component {
           });
       });
   };
-  // uploadImage = key => {
-  //   var file = this.state.image;
-  //   var ref = firebase.storage().ref("/users-" + Date.now());
-  //   ref.put(file).then(function(snapshot) {
-  //     console.log("Uploaded a blob or file!", snapshot);
-  //   });
-  // };
+  getBackHandler = () => {
+    this.props.history.push("/users");
+  };
   render() {
     return (
-      <div className="form-container">
-        <h3>Enter Data:</h3>
-        <form onSubmit={this.handleSubmit}>
-          <label>Name: </label>
-          <input
-            id="name"
-            type="text"
-            name="name"
-            onChange={event => this.handleChange(event)}
-            value={this.state.text}
-          />
-          <label>Email: </label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            onChange={event => this.handleChange(event)}
-            value={this.state.text}
-          />
-          <label>Image: </label>
-          <input id="image" type="file" onChange={this.handleChangeImage} />
+      <div>
+        <h1>Edit form : </h1>
+        <div className="form-container">
+          <h3>Enter Data:</h3>
+          <form onSubmit={this.handleUpdate}>
+            <label>Name: </label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              onChange={this.handleChange}
+              //value={this.state.obj.username}
+            />
+            <label>Email: </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              onChange={this.handleChange}
+              //value={this.state.obj.email}
+            />
+            <label>Image: </label>
+            <input id="image" type="file" onChange={this.handleChangeImage} />
 
-          <button onSubmit={this.handleSubmit}>Send</button>
-        </form>
-        <button onClick={this.showDataHandler}>Show All</button>
+            <button onSubmit={this.handleUpdate}>Update</button>
+          </form>
+          <button onClick={this.getBackHandler}>go Back</button>
+        </div>
       </div>
     );
   }
 }
-export default withRouter(Form);
+
+export default withRouter(EditData);

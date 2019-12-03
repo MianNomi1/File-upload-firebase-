@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Router, Switch, Route, Link } from "react-router-dom";
+import { withRouter } from "react-router";
 import * as firebase from "firebase";
 class Show extends Component {
   state = {
@@ -13,6 +15,10 @@ class Show extends Component {
         this.setState({ obj: data.val() });
       });
   }
+  handleClick = id => {
+    console.log(id);
+    this.props.history.push("/edit/" + id);
+  };
   render() {
     let fetched = null;
     fetched = Object.keys(this.state.obj).map(key => {
@@ -26,6 +32,7 @@ class Show extends Component {
           <div className="image-container">
             <img src={this.state.obj[key].url}></img>
           </div>
+          <button onClick={() => this.handleClick(key)}>Edit</button>
         </div>
       );
     });
@@ -37,4 +44,4 @@ class Show extends Component {
     );
   }
 }
-export default Show;
+export default withRouter(Show);
