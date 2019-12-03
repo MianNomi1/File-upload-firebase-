@@ -41,16 +41,31 @@ class Form extends Component {
       })
       .then(key => {
         var file = image;
+        var newUrl = "";
         var ref = firebase.storage().ref("/users-" + key);
-        ref.put(file).then(fileData => {
-          console.log("Uploaded a blob or file!", fileData);
-          imageurl = fileData.metadata.fullPath;
-          return firebase
-            .database()
-            .ref("users")
-            .child(key)
-            .update({ url: imageurl });
-        });
+        ref
+          .put(file)
+          .then(fileData => {
+            console.log("Uploaded a blob or file!", fileData);
+            imageurl = fileData.metadata.fullPath;
+            return imageurl;
+          })
+          .then(imageurl => {
+            firebase
+              .storage()
+              .ref(imageurl)
+              .getDownloadURL()
+              .then(url => {
+                console.log(url);
+                newUrl = url;
+                firebase
+                  .database()
+                  .ref("users")
+                  .child(key)
+                  .update({ url: newUrl });
+                return newUrl;
+              });
+          });
       });
   };
   // uploadImage = key => {
