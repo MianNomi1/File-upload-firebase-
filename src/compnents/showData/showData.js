@@ -19,6 +19,12 @@ class Show extends Component {
     console.log(id);
     this.props.history.push("/edit/" + id);
   };
+  handleDelete = id => {
+    firebase
+      .database()
+      .ref("users/" + id)
+      .remove();
+  };
   render() {
     let fetched = null;
     fetched = Object.keys(this.state.obj).map(key => {
@@ -33,6 +39,7 @@ class Show extends Component {
             <img src={this.state.obj[key].url}></img>
           </div>
           <button onClick={() => this.handleClick(key)}>Edit</button>
+          <button onClick={() => this.handleDelete(key)}>Delete</button>
         </div>
       );
     });
